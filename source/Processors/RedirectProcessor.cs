@@ -113,7 +113,8 @@ namespace SharedSource.RedirectModule.Processors
                 var redirectToItem = db.GetItem(path);
                 if (redirectToItem == null)
                 {
-                    if (LinkManager.GetDefaultUrlBuilderOptions() != null && (bool)LinkManager.GetDefaultUrlBuilderOptions().EncodeNames)
+                    var options = LinkManager.GetDefaultUrlOptions();
+                    if (options != null && options.EncodeNames)
                     {
                         path = Sitecore.MainUtil.DecodeName(path);
                     }
@@ -164,6 +165,9 @@ namespace SharedSource.RedirectModule.Processors
 
         private static bool AllowRedirectsOnFoundItem(Database db)
         {
+            bool redirectanything = Sitecore.Configuration.Settings.GetBoolSetting(Constants.Settings.RedirectAnything,true);
+            if (redirectanything)
+                return true;
             if (db == null)
                 return false;
             var redirectRoot = Sitecore.Configuration.Settings.GetSetting(Constants.Settings.RedirectRootNode);
