@@ -28,7 +28,7 @@ namespace SharedSource.RedirectModule.Processors
             // This processor is added to the pipeline after the Sitecore Item Resolver.  We want to skip everything if the item resolved successfully.
             // Also, skip processing for the visitor identification items related to DMS.
             Assert.ArgumentNotNull(args, "args");
-            if ((Sitecore.Context.Item == null || AllowRedirectsOnFoundItem(Sitecore.Context.Database)) && args.LocalPath != Constants.Paths.VisitorIdentification && Sitecore.Context.Database != null)
+            if ((Sitecore.Context.Item == null || AllowRedirectsOnFoundItem(Sitecore.Context.Database)) && !args.LocalPath.StartsWith(Constants.Paths.Sitecore,StringComparison.InvariantCultureIgnoreCase) && args.LocalPath != Constants.Paths.VisitorIdentification && Sitecore.Context.Database != null)
             {
                 // Grab the actual requested path for use in both the item and pattern match sections.
                 var requestedUrl = HttpContext.Current.Request.Url.ToString();
@@ -113,7 +113,8 @@ namespace SharedSource.RedirectModule.Processors
                 var redirectToItem = db.GetItem(path);
                 if (redirectToItem == null)
                 {
-                    if (LinkManager.GetDefaultUrlBuilderOptions() != null && (bool)LinkManager.GetDefaultUrlBuilderOptions().EncodeNames)
+                    var options = LinkManager.GetDefaultUrlOptions();
+                    if (options != null && options.EncodeNames)
                     {
                         path = Sitecore.MainUtil.DecodeName(path);
                     }
@@ -164,6 +165,9 @@ namespace SharedSource.RedirectModule.Processors
 
         private static bool AllowRedirectsOnFoundItem(Database db)
         {
+            bool redirectanything = Sitecore.Configuration.Settings.GetBoolSetting(Constants.Settings.RedirectAnything,true);
+            if (redirectanything)
+                return true;
             if (db == null)
                 return false;
             var redirectRoot = Sitecore.Configuration.Settings.GetSetting(Constants.Settings.RedirectRootNode);
