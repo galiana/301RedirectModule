@@ -28,7 +28,7 @@ namespace SharedSource.RedirectModule.Processors
             // This processor is added to the pipeline after the Sitecore Item Resolver.  We want to skip everything if the item resolved successfully.
             // Also, skip processing for the visitor identification items related to DMS.
             Assert.ArgumentNotNull(args, "args");
-            if ((Sitecore.Context.Item == null || AllowRedirectsOnFoundItem(Sitecore.Context.Database)) && args.LocalPath != Constants.Paths.VisitorIdentification && Sitecore.Context.Database != null)
+            if ((Sitecore.Context.Item == null || AllowRedirectsOnFoundItem(Sitecore.Context.Database)) && !args.LocalPath.StartsWith(Constants.Paths.Sitecore,StringComparison.InvariantCultureIgnoreCase) && args.LocalPath != Constants.Paths.VisitorIdentification && Sitecore.Context.Database != null)
             {
                 // Grab the actual requested path for use in both the item and pattern match sections.
                 var requestedUrl = HttpContext.Current.Request.Url.ToString();

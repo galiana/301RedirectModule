@@ -8,6 +8,7 @@ namespace SharedSource.RedirectModule.Helpers
         {
             public static string VisitorIdentification = "/layouts/system/visitoridentification";
             public static string MediaLibrary = "/sitecore/media library/";
+            public static string Sitecore = "/sitecore";
         }
 
         public static class Settings
